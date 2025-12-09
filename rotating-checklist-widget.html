@@ -741,6 +741,18 @@
             init();
         });
 
+        // Auto-init if API key is in URL (for iframe embed that doesn't trigger ready event)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('airtableApiKey')) {
+            console.log('API key found in URL, auto-initializing...');
+            // Wait a moment for DOM to be ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                setTimeout(init, 100);
+            }
+        }
+
         JFCustomWidget.subscribe("submit", async function() {
             // Update Airtable with checked items
             try {
