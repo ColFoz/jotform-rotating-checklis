@@ -685,11 +685,15 @@
         // Initialize widget
         async function init() {
             try {
-                // Get API key from widget settings
-                CONFIG.airtableApiKey = JFCustomWidget.getWidgetSetting('airtableApiKey') || '';
+                // Get API key from URL params first (for iframe embed), then widget settings, then localStorage
+                const urlParams = new URLSearchParams(window.location.search);
+                CONFIG.airtableApiKey = urlParams.get('airtableApiKey')
+                    || JFCustomWidget.getWidgetSetting('airtableApiKey')
+                    || localStorage.getItem('airtable_api_key')
+                    || '';
 
                 // Override base ID if provided
-                const customBaseId = JFCustomWidget.getWidgetSetting('baseId');
+                const customBaseId = urlParams.get('baseId') || JFCustomWidget.getWidgetSetting('baseId');
                 if (customBaseId) CONFIG.baseId = customBaseId;
 
                 if (!CONFIG.airtableApiKey) {
